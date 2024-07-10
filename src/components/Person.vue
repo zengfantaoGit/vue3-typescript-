@@ -4,10 +4,13 @@
       人类
     </div>
 <!--    模板中不需要访问value属性-->
-    <div>name: {{Name}}</div>
-    <div>age: {{age}}</div>
+    <div>name: {{person.name}}</div>
+    <div>age: {{person.age}}</div>
     <button @click="setName">点击便名字</button>
     <button @click="setAge">添加一岁</button>
+    <hr>
+    <div>obj.a.b.c.d: {{obj.a.b.c.d}}</div>
+    <button @click="setObj">设置obj</button>
   </div>
 </template>
 
@@ -18,21 +21,37 @@
 
 
 <script lang="ts" setup name="Person">
-    import {ref} from 'vue'
+    import {reactive} from 'vue'
     console.log('setup')
-    // 一个RefImpl的实例对象，简称ref对象或ref，ref对象的value属性是响应式的。
-    // 对于当前age对象而言，age不是响应式的，age.value是
-    let age = ref(18)
-    let Name = ref('haru')
+    // return Proxy
+    const person = reactive({
+      name: 'haru',
+      age: 18
+    })
+    // 注意点：reactive定义的响应式数据是“深层次”的。
+    let obj = reactive({
+      a:{
+        b:{
+          c:{
+            d:666
+          }
+        }
+      }
+    })
 
-    console.log(age,'age')  // RefImpl {value: age }
+    // 一个Proxy代理对象
+    console.log(person)
+
     function setAge() {
-      // 若需要修改值，则需要访问该对象的value属性
-      // JS中操作ref对象时候需要.value
-      age.value += 1
+      // 可以直接使用person.age访问数据
+      person.age += 1
     }
     function setName() {
-      Name.value = '梨花'
+      person.name = '梨花'
+    }
+
+    function setObj() {
+      obj.a.b.c.d = 999
     }
 
 </script>
