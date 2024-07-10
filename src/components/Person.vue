@@ -14,7 +14,6 @@
 
 
 <script lang="ts" setup name="Person">
-
   // 引入computed计算属性函数
   import {ref, computed} from "vue";
   let firstName = ref('zhan')
