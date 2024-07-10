@@ -8,6 +8,7 @@
     <div>age: {{person.age}}</div>
     <button @click="setName">点击便名字</button>
     <button @click="setAge">添加一岁</button>
+    <button @click="setPerson">设置人</button>
     <hr>
     <div>obj.a.b.c.d: {{obj.a.b.c.d}}</div>
     <button @click="setObj">设置obj</button>
@@ -24,7 +25,7 @@
     import {reactive,ref} from 'vue'
     // 若ref接收的是对象类型，内部其实也是调用了reactive函数。
     // reactive无法接收基本数据类型作为参数
-    const person = ref({
+    const person = reactive({
       name: 'haru',
       age: 18
     })
@@ -38,15 +39,17 @@
       }
     })
 
-    // 此时使用ref包装对象的返回结果是一个RefImpl对象，但内部的value属性是由Proxyduix包裹
-    console.log(person)
-
     function setAge() {
-      // 此时先要访问RefImpl的value属性，再当作Proxy对象处理
-      person.value.age += 1
+      person.age += 1
     }
     function setName() {
-      person.value.name = '梨花'
+      person.name = '梨花'
+    }
+
+    function setPerson() {
+      // Cannot assign to 'person' because it is a constant.
+      // person = reactive({name: 'mo', age: 26}) (无法直接赋值）
+      Object.assign(person, {name: 'mo', age: 26}) // 只能通过Object.assign方法进行赋值才不会丢失响应式
     }
 
     function setObj() {
