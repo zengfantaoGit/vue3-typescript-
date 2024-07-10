@@ -21,15 +21,14 @@
 
 
 <script lang="ts" setup name="Person">
-    import {reactive} from 'vue'
-    console.log('setup')
-    // return Proxy
-    const person = reactive({
+    import {reactive,ref} from 'vue'
+    // 若ref接收的是对象类型，内部其实也是调用了reactive函数。
+    // reactive无法接收基本数据类型作为参数
+    const person = ref({
       name: 'haru',
       age: 18
     })
-    // 注意点：reactive定义的响应式数据是“深层次”的。
-    let obj = reactive({
+    let obj = ref({
       a:{
         b:{
           c:{
@@ -39,19 +38,19 @@
       }
     })
 
-    // 一个Proxy代理对象
+    // 此时使用ref包装对象的返回结果是一个RefImpl对象，但内部的value属性是由Proxyduix包裹
     console.log(person)
 
     function setAge() {
-      // 可以直接使用person.age访问数据
-      person.age += 1
+      // 此时先要访问RefImpl的value属性，再当作Proxy对象处理
+      person.value.age += 1
     }
     function setName() {
-      person.name = '梨花'
+      person.value.name = '梨花'
     }
 
     function setObj() {
-      obj.a.b.c.d = 999
+      obj.value.a.b.c.d = 999
     }
 
 </script>
