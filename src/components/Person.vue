@@ -1,64 +1,50 @@
 <template>
   <div class="person">
-    <h1>情况四：监视【ref】或【reactive】定义的【对象类型】数据中的某个属性</h1>
-    <h2>姓名：{{ person.name }}</h2>
-    <h2>年龄：{{ person.age }}</h2>
-    <h2>汽车：{{ person.car.c1 }}、{{ person.car.c2 }}</h2>
-    <button @click="changeName">修改名字</button>
-    <button @click="changeAge">修改年龄</button>
-    <button @click="changeC1">修改第一台车</button>
-    <button @click="changeC2">修改第二台车</button>
-    <button @click="changeCar">修改整个车</button>
+    <h1>需求：水温达到50℃，或水位达到20cm，则联系服务器</h1>
+    <h2 id="demo">水温：{{temp}}</h2>
+    <h2>水位：{{height}}</h2>
+    <button @click="changePrice">水温+10</button>
+    <button @click="changeSum">水位+10</button>
+    <button @click="num += 1;count+= 1">num ++ </button>
   </div>
 </template>
 
 
 <script lang="ts" setup name="Person">
-  // 引入watch监听函数
-  import {watch,reactive} from "vue";
+  import {ref,watch,watchEffect} from "vue";
+  let temp = ref(0)
+  let height = ref(0)
+  let num = ref(0)
+  let count = 0
 
-  const person = reactive({
-    name:'张三',
-    age:18,
-    car:{
-      c1:'奔驰',
-      c2:'宝马'
+  function changePrice() {
+    temp.value += 10
+  }
+
+  function changeSum() {
+    height.value += 10
+  }
+
+  // 使用watch监视，则必须声明需要监视temp与height的ref对象
+  watch([temp,height], (value) => {
+    console.log('watch')
+    // 此时val: [temp,height]
+    let [newTemp, newHeight] = value
+    if (newTemp >= 50 || newHeight >= 20) {
+      console.log('发送服务器watch')
     }
   })
 
-  function changeName() {
-    person.name += '='
-  }
-  function changeAge() {
-    person.age += 1
-  }
-  function changeC1(){
-    person.car.c1 = '奥迪'
-  }
-  function changeC2(){
-    person.car.c2 = '大众'
-  }
-  function changeCar(){
-    person.car = {c1:'雅迪',c2:'爱玛'}
-  }
-
-  function changePerson() {
-    Object.assign(person,{name: 'mo',age: 26})
-  }
-
-  // 若直接写入，则当调用changeCar函数修改变量，watch无法检测对应变化
-  // const stopWatch = watch(person.car, (newVal,oldVal) => {
-  // 监视，情况四：监视响应式对象中的某个属性，且该属性是对象类型的，可以直接写，也能写函数，更推荐写函数
-  // 这种写法只能检测person.car对象变化，无法检测对象内的变化，需要手动开启深度监视
-  const stopWatch = watch(() => person.car, (newVal,oldVal) => {
-    console.log('person.car',newVal,oldVal)
-  },{deep:true})
-
-  // 监视，情况四：监视响应式对象中的某个属性，且该属性是基本类型的，要写成函数式
-  watch(()=> person.name,(newValue,oldValue)=>{
-    console.log('person.name变化了',newValue,oldValue)
+  // 而使用watchEffect则不需要指明需要监督的属性。
+  // 且该watchEffect传入的函数会默认开始调用一次
+  const stopWatch = watchEffect(() => {
+    // count不是响应式数据，count的变化不会触发回调
+    console.log('watchEffect',count)
+    // 只有该回调函数用到的可响应式数据发生变化时才会重新触发回调
+    if (temp.value >= 50 || height.value >= 20) {
+      console.log('发送服务器watchEffect')
+    }
   })
-
 </script>
 
 <style scoped>
