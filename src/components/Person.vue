@@ -1,14 +1,14 @@
 <template>
   <div class="person">
-    <h1>情况二：监视【reactive】定义的【对象类型】数据</h1>
-    <div>姓名: {{person.name}}</div>
-    <div>年龄：{{person.age}}</div>
+    <h1>情况四：监视【ref】或【reactive】定义的【对象类型】数据中的某个属性</h1>
+    <h2>姓名：{{ person.name }}</h2>
+    <h2>年龄：{{ person.age }}</h2>
+    <h2>汽车：{{ person.car.c1 }}、{{ person.car.c2 }}</h2>
     <button @click="changeName">修改名字</button>
     <button @click="changeAge">修改年龄</button>
-    <button @click="changePerson">修改整个人</button>
-    <hr>
-    <div>obj.a.b.c: {{obj.a.b.c}}</div>
-    <button @click="test">修改obj.a.b.c</button>
+    <button @click="changeC1">修改第一台车</button>
+    <button @click="changeC2">修改第二台车</button>
+    <button @click="changeCar">修改整个车</button>
   </div>
 </template>
 
@@ -18,15 +18,11 @@
   import {watch,reactive} from "vue";
 
   const person = reactive({
-    name: 'haru',
-    age: 18
-  })
-
-  const obj = reactive({
-    a: {
-      b: {
-        c: 1
-      }
+    name:'张三',
+    age:18,
+    car:{
+      c1:'奔驰',
+      c2:'宝马'
     }
   })
 
@@ -36,22 +32,31 @@
   function changeAge() {
     person.age += 1
   }
+  function changeC1(){
+    person.car.c1 = '奥迪'
+  }
+  function changeC2(){
+    person.car.c2 = '大众'
+  }
+  function changeCar(){
+    person.car = {c1:'雅迪',c2:'爱玛'}
+  }
 
   function changePerson() {
     Object.assign(person,{name: 'mo',age: 26})
   }
 
-  function test(){
-    obj.a.b.c = 888
-  }
+  // 若直接写入，则当调用changeCar函数修改变量，watch无法检测对应变化
+  // const stopWatch = watch(person.car, (newVal,oldVal) => {
+  // 监视，情况四：监视响应式对象中的某个属性，且该属性是对象类型的，可以直接写，也能写函数，更推荐写函数
+  // 这种写法只能检测person.car对象变化，无法检测对象内的变化，需要手动开启深度监视
+  const stopWatch = watch(() => person.car, (newVal,oldVal) => {
+    console.log('person.car',newVal,oldVal)
+  },{deep:true})
 
-  // 默认开启了深度监视，拿取对象（newVal === oldVal）
-  const stopWatch = watch(person, (newVal,oldVal) => {
-    console.log('person',newVal,oldVal)
-  },)
-
-  watch(obj,(newValue,oldValue)=>{
-    console.log('Obj变化了',newValue,oldValue)
+  // 监视，情况四：监视响应式对象中的某个属性，且该属性是基本类型的，要写成函数式
+  watch(()=> person.name,(newValue,oldValue)=>{
+    console.log('person.name变化了',newValue,oldValue)
   })
 
 </script>
