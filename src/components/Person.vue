@@ -1,52 +1,59 @@
 <template>
   <div class="person">
-    <h1>情况二：监视【ref】定义的【对象类型】数据</h1>
+    <h1>情况二：监视【reactive】定义的【对象类型】数据</h1>
     <div>姓名: {{person.name}}</div>
     <div>年龄：{{person.age}}</div>
     <button @click="changeName">修改名字</button>
     <button @click="changeAge">修改年龄</button>
     <button @click="changePerson">修改整个人</button>
+    <hr>
+    <div>obj.a.b.c: {{obj.a.b.c}}</div>
+    <button @click="test">修改obj.a.b.c</button>
   </div>
 </template>
 
 
 <script lang="ts" setup name="Person">
   // 引入watch监听函数
-  import {watch,ref} from "vue";
+  import {watch,reactive} from "vue";
 
-  const person = ref({
+  const person = reactive({
     name: 'haru',
     age: 18
   })
 
+  const obj = reactive({
+    a: {
+      b: {
+        c: 1
+      }
+    }
+  })
+
   function changeName() {
-    person.value.name += '='
+    person.name += '='
   }
   function changeAge() {
-    person.value.age += 1
+    person.age += 1
   }
 
   function changePerson() {
-    person.value = {name: 'mo',age: 26}
+    Object.assign(person,{name: 'mo',age: 26})
   }
 
-  // 若不添加{deep: true} 开启深度监视，则只能检测value值的变化，而无法检测value内对象值的变化
-  // watch(person, (newVal,oldVal) => {
-  //   console.log('person',newVal,oldVal)
-  // })
-  // 配置后即使修改对象内部的数据也会触发watch回调.
-  // 若添加immediate:true则会在初始化时调用一次watch回调
+  function test(){
+    obj.a.b.c = 888
+  }
+
+  // 默认开启了深度监视，拿取对象（newVal === oldVal）
   const stopWatch = watch(person, (newVal,oldVal) => {
-    // 如果只修改对象内的值，则newVal与oldVal的值相同.
-    // 本质上是因为oldVal是直接拿取原先对象的引用而非深拷贝导致的
     console.log('person',newVal,oldVal)
-  },{deep:true,immediate:true})
-  /*
-    监视，情况一：监视【ref】定义的【对象类型】数据，监视的是对象的地址值，若想监视对象内部属性的变化，需要手动开启深度监视
-    watch的第一个参数是：被监视的数据
-    watch的第二个参数是：监视的回调
-    watch的第三个参数是：配置对象（deep、immediate等等.....）
-  */
+  },)
+
+  watch(obj,(newValue,oldValue)=>{
+    console.log('Obj变化了',newValue,oldValue)
+  })
+
 </script>
 
 <style scoped>
