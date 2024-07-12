@@ -2,41 +2,24 @@
   <div class="person">
     <h2>当前求和为：{{ sum }}</h2>
     <button @click="changeSum">点我sum+1</button>
+    <hr>
+    <button @click="getDog">点击获取狗图</button>
+    <div>
+      <img :src="dog" v-for="(dog,index) in dogImgs" :key="index" alt="">
+    </div>
   </div>
 </template>
 
 
 <script lang="ts" setup name="Person">
-import {ref,onBeforeMount,onMounted,onBeforeUpdate,onUpdated,onBeforeUnmount,onUnmounted} from 'vue'
-// 1. 在vue3中，setup函数代替了vue2原先的beforeCreate与created函数
-console.log('创建')
+import useDog from "@/hooks/useDog";
+import useSum from "@/hooks/useSum";
 
-// 数据
-let sum = ref(0)
-// 方法
-function changeSum() {
-  sum.value += 1
-}
-// 生命周期钩子
-onBeforeMount(()=>{
-  console.log('子挂载之前')
-})
-onMounted(()=>{
-  console.log('子挂载完毕')
-})
-onBeforeUpdate(()=>{
-  console.log('子更新之前')
-})
-onUpdated(()=>{
-  console.log('子更新完毕')
-})
-// onBeforeUnmount与onUnmounted分别代替了原先的destroy生命周期
-onBeforeUnmount(()=>{
-  console.log('子卸载之前')
-})
-onUnmounted(()=>{
-  console.log('子卸载完毕')
-})
+// 解构赋值获取对应方法
+let {dogImgs,getDog} = useDog()
+let {sum, changeSum} = useSum()
+
+let a = 1
 </script>
 
 <style scoped>
@@ -52,5 +35,10 @@ div {
   box-shadow: 0 0 4px;
   border: 1px solid red;
   border-radius: 20px;
+}
+
+img {
+  height: 100px;
+  margin-right: 10px;
 }
 </style>

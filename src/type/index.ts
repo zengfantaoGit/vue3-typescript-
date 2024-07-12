@@ -8,4 +8,3 @@ export type Person = {
 
 export type PersonList = Person[]
 
-
