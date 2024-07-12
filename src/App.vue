@@ -1,11 +1,20 @@
 <template>
   <div class="app">
-    <Person></Person>
+<!--    向子组件传递personList的数据-->
+    <Person :personList="personList"></Person>
   </div>
 </template>
 
 <script lang="ts" setup name="App">
   import Person from '@/components/Person.vue'
+  import {ref} from 'vue'
+  import {type PersonList} from "@/type";
+
+  const personList = ref<PersonList>([
+    {name: 'haru', age: 14, id: 1, sex: '男'},
+    {name: 'mo', age: 24, id: 2, sex: '男'},
+    {name: 'wei', age: 14, id: 3, sex: '男'}
+  ])
 </script>
 
 <style scoped>
