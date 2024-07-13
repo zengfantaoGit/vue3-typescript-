@@ -2,5 +2,10 @@
 import { createApp } from 'vue'
 // 引入App根组件
 import App from './App.vue'
+import router from "@/router";
 // 渲染App组件并且挂载到#app容器
-createApp(App).mount('#app')
+const app = createApp(App)
+// 添加router逻辑
+app.use(router)
+
+app.mount('#app')
