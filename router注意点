@@ -1,0 +1,16 @@
+1. 路由组件通常存放在pages 或 views文件夹，一般组件通常存放在components文件夹。
+
+2. 通过点击导航，视觉效果上“消失” 了的路由组件，默认是被卸载掉的，需要的时候再去挂载。
+
+3. vue3中当路由一样，参数quary不一样的跳转不刷新
+   当路由的path都是一样的，quary不一样，在跳转的时候，不会执行onMounted等方法，页面也就不会刷新。
+
+   方法： 修改router-view，在app.vue页面给标签加key，当key不同时，就会刷新。
+
+   <template>
+     <router-view :key="route.fullPath"></router-view>
+   </template>
+   <script  setup>
+   import { useRoute } from 'vue-router'
+       const route = useRoute()
+   </script>

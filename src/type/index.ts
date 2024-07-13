@@ -8,3 +8,9 @@ export type Person = {
 
 export type PersonList = Person[]
 
+export interface News {
+    id: number
+    title: string
+    content: string
+}
+export type NewsList = Array<News>
